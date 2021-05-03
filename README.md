@@ -3,7 +3,7 @@
 
 > Materi: Graph  
 > Pengajar: Asisten Praktikum 2021
-## NAMA - NPM
+## ANDARU DANURDARA WIBISANA - 140810200020
 
 **Harap untuk membaca instruksi terlebih dahulu sampai dipahami!**
 
