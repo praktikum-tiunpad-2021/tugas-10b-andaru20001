@@ -3,6 +3,7 @@
 #include <functional>
 #include <unordered_map>
 #include <unordered_set>
+#include <vector>
 
 namespace strukdat {
 
@@ -49,7 +50,16 @@ class graph {
   }
 
   void remove_vertex(const VertexType &val) {
-    // TODO: Implementasikan!
+    // auto check = std::find(_adj_list.begin(), _adj_list.end(), val);
+    // auto second_key = _adj_list[check]->second;
+
+    // while (check == val){
+    //   second_key = _adj_list[check]->second;
+    //   _adj_list.erase(check, second_key);
+    //   _adj_list.erase(second_key, check);
+    //   check = std::find(_adj_list.begin(), _adj_list.end(), val);
+    // };
+    _adj_list.erase(val);
   }
 
   /**
@@ -59,7 +69,8 @@ class graph {
    * @param val2 nilai vertex 2
    */
   void add_edge(const VertexType &val1, const VertexType val2) {
-    // TODO: Implementasikan!
+    _adj_list[val1].insert(val2);
+    _adj_list[val2].insert(val1);
   }
 
   /**
@@ -68,7 +79,8 @@ class graph {
    * @param val nilai dari vertex yang akan dihapus
    */
   void remove_edge(const VertexType &val1, const VertexType &val2) {
-    // TODO: Implementasikan!
+    _adj_list[val1].erase(val2);
+    _adj_list[val2].erase(val1);
   }
 
   /**
@@ -80,7 +92,7 @@ class graph {
    * @return jumlah node pada graph
    */
   size_t order() const {
-    // TODO: Implementasikan!
+    return _adj_list.size();
   }
 
   /**
@@ -92,7 +104,17 @@ class graph {
    * @return vertex-vertex saling bertetangga
    */
   bool is_edge(const VertexType &val1, const VertexType &val2) const {
-    // TODO: Implementasikan!
+    auto check1 = _adj_list.at(val1).find(val2);
+    auto check2 = _adj_list.at(val2).find(val1);
+    auto end1 = _adj_list.at(val1).end();
+    auto end2 = _adj_list.at(val2).end();
+
+    if (check1 != end1){
+      if (check2 != end2){
+        return 1;
+      }
+    }
+    return 0;
   }
 
   /**
@@ -103,7 +125,29 @@ class graph {
    */
   void bfs(const VertexType &root,
            std::function<void(const VertexType &)> func) const {
-    // TODO: Implementasikan!
+    std::unordered_map<VertexType, bool> visited;
+    VertexType temp = 0;
+    std::vector<VertexType> queue;
+
+    for (auto i = _adj_list.begin(); i != _adj_list.end(); i++){
+      visited.insert(std::make_pair(i->first, 0));
+    }
+
+    queue.push_back(root);
+    visited[root] = 1;
+
+    while (!queue.empty()){
+      temp = queue.front();
+      func(temp);
+      queue.erase(queue.begin());
+
+      for (auto i = _adj_list.at(temp).begin(); i != _adj_list.at(temp).end(); i++){
+        if (visited[*i] == 0){
+          visited[*i] = 1;
+          queue.push_back(*i);
+        }
+      }
+    }    
   }
 
   /**
@@ -114,7 +158,37 @@ class graph {
    */
   void dfs(const VertexType &root,
            std::function<void(const VertexType &)> func) const {
-    // TODO: Implementasikan!
+    std::unordered_map<VertexType, bool> visited;
+    VertexType temp = 0;
+    std::vector<VertexType> stack;
+
+    for (auto i = _adj_list.begin(); i != _adj_list.end(); i++){
+      visited.insert(std::make_pair(i->first, 0));
+    }
+
+    stack.insert(stack.begin(), root);
+    
+    while (!stack.empty()){
+      temp = stack.front();
+
+      if (visited[temp] == 0){
+        visited[temp] = 1;
+        func(temp);
+      }
+
+      auto i = _adj_list.at(temp).begin();
+      for (i; i != _adj_list.at(temp).end(); i++){
+        if (visited[*i] == 0){
+          // temp = *i;
+          stack.insert(stack.begin(), *i);
+          break;
+        }
+      }
+
+      if (i == _adj_list.at(temp).end()){
+        stack.erase(stack.begin());
+      }
+    }
   }
 
  private:
